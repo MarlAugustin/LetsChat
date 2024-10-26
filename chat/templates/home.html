@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+{% extends 'layout.html' %}
+
+{% block title %}
+    Lobby | LetsChat
+{% endblock %}
+
+{% block content %}
+    <h1 class="align-text-top">Public chats</h1>
+    <div class="create-room">
+      <a href="{% url 'create_room' %}" class="btn btn-primary">Create a new  room</a>
+    </div>
+    <form method="get">
+      <div class="input-group mb-3" id="search">
+        <input type="search" class="form-control" name="room_name" placeholder="Search..." aria-describedby="btn-send" value="{{room_name}}">
+        <button class="btn btn-outline-secondary" type="submit" id="btn-send">
+          <svg width="25px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+            <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/>
+          </svg>
+        </button>
+      </div>
+    </form>  
+    <div class="container">
+      <div class="row row-cols-1 row-cols-md-3 g-4">
+         {% for room in rooms%}
+              {% if room.public == True %}
+              <div class="col">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">{{room.name}}</h5>
+                    <a href="{% url 'room' room.slug %}" class="btn btn-success">Join the room</a>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+         {% endfor %}
+    </div>
+  </div>
+</div>
+<br>
+<nav aria-label="Rooms navigation" >
+  <ul class="pagination justify-content-center">
+  {% if rooms.has_previous %}
+      <li class="page-item">
+          <a class="page-link" href="?page=1" aria-label="Previous">
+          <span aria-hidden="true">&laquo; First</span>
+          </a>
+      </li>
+      <li class="page-item">
+          <a class="page-link" href="?{% if room_name %}room_name={{room_name}}&{% endif %}page={{rooms.previous_page_number}}">Previous</a>
+      </li>
+  {% endif %}
+  <li class="page-item">
+    <a class="page-link disabled">Page {{rooms.number}} of {{rooms.paginator.num_pages}}</a>
+  </li>
+  {% if rooms.has_next %}
+      <li class="page-item">
+          <a class="page-link" href="?{% if room_name %}room_name={{room_name}}&{% endif %}page={{rooms.next_page_number}}">Next</a>
+      </li>
+      <li class="page-item">
+          <a class="page-link" href="?{% if room_name %}room_name={{room_name}}&{% endif %}page={{rooms.paginator.num_pages}}" aria-label="Next">
+            <span aria-hidden="true">Last &raquo;</span>
+          </a>
+      </li>
+  {% endif %}
+{% endblock %}
+

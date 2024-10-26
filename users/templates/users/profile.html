@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+{% extends 'layout.html' %}
+{% block title %}
+    Profile
+{% endblock %}
+
+{% block content %}
+<div class="profile">
+    <div class="container text-center">
+        <div class="row">
+          <div class="col">
+            <img src="{{user.profile.pic.url}}" alt="">
+          </div>
+          <div class="col">
+            <h1>{{user.username}}'s Profile</h1>
+          </div>
+        </div>
+      </div>
+    <form method="POST" enctype='multipart/form-data'>
+      {% csrf_token %}  
+        <div class="row g-3">
+            <div class="col">
+                <label for="first_name">First name</label>
+                <input type="text" class='form-control' name="first_name" id="first_name" value="{{user.first_name}}">
+                <div class="invalid-feedback">Valid first name is required</div>
+            </div>
+            <div class="col">
+                <label for="last_name">Last name</label>
+                <input type="text" class='form-control' name="last_name" id="last_name" value="{{user.last_name}}">
+                <div class="invalid-feedback">Valid last name is required</div>
+            </div>
+        </div>
+        <div class="col-12">
+            <label for="username" class="form-label">Username</label>
+            <div class="input-group has-validation">
+              <span class="input-group-text">@</span>
+              <input type="text" class="form-control" name="username" id="username" value="{{user.username}}" required="">
+            <div class="invalid-feedback">
+                Your username is required.
+              </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <label for="email" class="form-label">Email</span></label>
+            <input type="email" class="form-control" name="email" id="email" value="{{user.email}}">
+        </div> 
+        </br>
+        <div class="input-group mb-3">
+            <input type="file" class="form-control" name="pic" id="pic" accept="image/*" >
+            <label class="input-group-text" for="pic">Select an image</label>
+        </div>
+        <br>
+        <button type="Update" class="btn btn-success btn-lg">Update profile</button>
+    </form>
+</div>
+{% endblock %}

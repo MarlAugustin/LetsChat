@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+{% extends 'auth_layout.html' %}
+
+{% block title %}
+    Register
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="p-5 bg-body-tertiary rounded-3">
+      <h1 class="text-body-emphasis">Sign up</h1>
+      <form method="post">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" class="form-control" required><br>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" class="form-control" required><br>
+        <label for="password1">Password:</label>
+        <input type="password" id="password1" name="password1" class="form-control" required><br>
+        <div id="passwordHelpBlock" class="form-text">
+            <p>* Your password can't be too similar to your other personal information.</p>
+            <p>* Your password must contain at least 8 characters.</p>
+            <p>* Your password can't be a commonly used password.</p>
+            <p>* Your password can't be entirely numeric.</p>
+        </div>
+        <br>
+        <label for="password2">Confirm your password:</label>
+        <input type="password" id="password2" name="password2" class="form-control" required><br>
+        <button type="submit" class="btn btn-success btn-lg">Create account</button>
+    </form>
+    <p><hr></p>
+    <p>Already part of our community?   <a href="{% url 'login' %}">Sign in</a></p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+{% extends 'layout.html' %}
+
+{% block title %}
+    {{room.name}} | LetsChat
+{% endblock %}
+
+{% block content %}
+    <div class="message-wrapper">
+        <div class="chat-header">
+            <h1>{{room.name}}</h1>
+        </div>
+        <div class="chat-messages">
+            <section class="chat">
+                {% for message in chat_messages%}
+                    {% if user == message.sender %}
+                        <div class="user-chats">
+                            <div class="user-img">
+                                <img height="50px" src="{{message.sender.profile.pic.url}}"></img>
+                            </div>
+                            <div class="msg">
+                                <div class="user-msg">
+                                    <p class="text-start">{{ message.content }}</p>
+                                    <span>{{ message.sender }} | {{ message.timestamp }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                    <div class="other-chats">
+                        <div class="other-img">
+                            <img height="50px" src="{{message.sender.profile.pic.url}}"></img>
+                        </div>
+                        <div class="msgs">
+                            <div class="other-msg">
+                                <p class="text-start">{{ message.content }}</p>
+                                <span>{{ message.sender }} | {{ message.timestamp }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <br>
+                {% endfor %}
+            </section>
+        </div>
+        <form id="message-form" class="chat-bottom">
+            <div class="input-group mb-3">
+                <textarea class="form-control" id="message-input" rows="3" placeholder="Your message..." aria-describedby="btn-send"></textarea>
+                <button class="btn btn-outline-secondary" type="submit" id="btn-send">Send</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+{{ room.slug|json_script:"json-roomslug" }}
+{{ request.user.username|json_script:"json-username" }}
+{{ request.user.profile.pic.url|json_script:"json-profile-pic" }}
+
+<script type="text/javascript">
+    const room_slug = JSON.parse(document.getElementById('json-roomslug').textContent);
+    const userName = JSON.parse(document.getElementById('json-username').textContent);
+    const profile_pic = JSON.parse(document.getElementById('json-profile-pic').textContent);
+    timestamp = formatDate(new Date())
+    const socketURL = `ws://${window.location.host}/ws/messages/${room_slug}/`;
+    const chatSocket = new WebSocket(socketURL);
+
+    chatSocket.onmessage = function(e) {
+        let data = JSON.parse(e.data)
+        if(data.message) {
+            html = ''
+            if (data.username == userName) {
+                html += '<div class="user-chats">'
+                html += '<div class="user-img"><img height="50px" src="'+ data.profile_pic +'"></img></div>'
+                html += '<div class="msg"><div class="user-msg">'
+                html += '<p class="text-start">' + data.message +'</p>'
+                html += '<span>'+ data.username + '| '+ data.timestamp + '</span>'
+                html += '</div></div></div>'
+            } else {
+                html += '<div class="other-chats">'
+                html += '<div class="other-img"><img height="50px" src="'+ data.profile_pic +'"></img></div>'
+                html += '<div class="msgs"><div class="other-msg"><p class="text-start">' + data.message +'</p>'
+                html += '<span>'+ data.username + '| '+ data.timestamp +'</span></div></div></div>'
+            }
+           
+            document.querySelector('.chat').innerHTML += html
+        }else{
+            alert('No message was written')
+        }
+        console.log('Data:', data)
+    }
+    chatSocket.onclose = function(e) {
+      console.log('onmessage')
+    }
+    const form = document.getElementById('message-form');
+    form.addEventListener('submit', function(e){
+        e.preventDefault();
+        let message_sent = document.getElementById('message-input').value;
+        chatSocket.send(JSON.stringify({
+            'message': message_sent,
+            'username': userName,
+            'profile_pic': profile_pic,
+            'timestamp': timestamp,
+            'room_slug': room_slug
+        }));
+        document.getElementById('message-input').value = '';
+    })
+    function formatDate(date) {
+        const options = { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true };
+        const formattedDate = date.toLocaleString('en-US', options);
+    
+        // Replace AM/PM with lowercase
+        return formattedDate.replace(/(AM|PM)/, (match) => match.toLowerCase());
+    }
+    
+</script>
+{% endblock %}

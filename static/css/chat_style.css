@@ -1,0 +1,128 @@
+main {
+    min-height: 600px;
+}
+.alert {
+    margin-top: 3rem;
+}
+.wrapper {
+    margin-top: 4rem;
+}
+.message-wrapper {
+    width: 80%;
+    margin: auto;
+    letter-spacing: 0.5px;
+    height: 80%;
+}
+/* This is the css for the title */
+.chat-header{
+    border: 1px solid #ccc;
+    width: 100%;
+    height: 10%;
+    border-bottom: none;
+    display: inline-block;
+    background-color: #efefef;
+    margin: 0;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+}
+.chat-header h1{
+    text-align: center;
+    font-weight: bold;
+}
+/* This is the css for button to create a room */
+.create-room{
+    align-items: right;
+    text-align: right;
+    margin-right: 20px;
+}
+/* This is the css for the message background */
+.chat-messages{
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    overflow: hidden;
+    min-height: 500px;
+    padding: 30px 0 0 25px;
+}
+.chat{
+    max-height: 500px;
+    overflow-y: auto;
+}
+/* This is the css for the form which contains the send button*/
+.chat-bottom{
+    border: 1px solid #ccc;
+    position: relative;
+    height: 11%;
+    background-color: rgb(239 239 239);
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+.chat-bottom div{
+    width: 90%;
+    margin: 0 auto;
+}
+/* This css is used to customize the message sent by the connected user */
+.user-chats {
+    overflow: hidden;
+    margin: 26px 20px;
+}
+.user-img {
+    display: inline-block;
+    width: 75px;
+    float: right;
+    margin-right: 1rem;
+}
+.user-msg{
+    float: right;
+    width: 46%;
+}
+.user-msg p {
+    background-color: #12b4ff;
+    color: #fff;
+    border-radius: 10px;
+    font-size: 14px;
+    padding: 5px 10px 5px 12px;
+    width: 100%;
+    padding: 1rem;
+    box-shadow: rgb(0 0 0 / 25%) 0px 5px 5px 2px;
+}
+
+/* This css is used to customize the message sent by the other users */
+.other-img {
+    display: inline-block;
+    width: 75px;
+    float: left;
+}
+.msgs {
+    display: inline-block;
+    padding: 0 0 0 10px;
+    vertical-align: top;
+    width: 92%;
+}
+.other-msg{
+    width: 57%;
+}
+.other-msg p {
+    background: #efefef none repeat scroll 0 0;
+    border-radius: 10px;
+    color: #646464;
+    font-size: 14px;
+    padding: 1rem;
+    width: 100%;
+    box-shadow: rgb(0 0 0 / 25%) 0px 5px 5px 2px;
+}   p{
+    overflow: break-word;
+}
+/* css for the search button in the home page*/
+#search {
+    text-align: center;
+    align-items: center;
+    position: relative;
+    width: 50%;
+    margin: 0 auto;
+}
+/* scrollbar for private messages*/
+#scrollarea {
+    max-height: 600px;
+    overflow-y: auto;
+}

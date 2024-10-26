@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+{% extends 'auth_layout.html' %}
+{% load crispy_forms_tags %}
+{% block title %}
+    Login
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="p-5 bg-body-tertiary rounded-3">
+      <h1 class="text-body-emphasis">Login</h1>
+      <form action="" method="post">
+        {% csrf_token %}
+        {{ form|crispy}}
+        <p>Not part of our community?   <a href="{%url 'register'%}">Register now</a></p>
+        <button type="submit" class="btn btn-success btn-lg">Sign in</button>
+    </form>
+    <p><a href="{% url 'password_reset' %}">Forgot password?</a></p>     
+    </div>
+</div>
+{% endblock %}

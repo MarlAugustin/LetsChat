@@ -1,0 +1,24 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    Room creation | LetsChat
+{% endblock %}
+
+{% block content %}
+    <h1>Create a new public room</h1>
+    <div class="form-floating mb-3">
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-floating">
+                <input name="room-name" type="text" class="form-control" required id="floatingInput" placeholder="Enter a room name" aria-describedby="roomHelpBlock">
+                <label for="floatingInput">Enter a room name</label>
+            </div>
+            <div id="roomHelpBlock" class="form-text">
+                The name of the new room must be unique. Uppercase letters aren't taken into account, Basketball and basketball are the same room name.</br>
+                The maximum length for the name of a public chat room is 100.
+              </div>
+            <button class="btn btn-outline-secondary" type="submit" id="btn-create">Create</button>
+        </form>
+      </div>
+{% endblock %}
+
