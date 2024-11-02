@@ -10,6 +10,7 @@
     <div class="p-5 bg-body-tertiary rounded-3">
       <h1 class="text-body-emphasis">Sign up</h1>
       <form method="post">
+        {% csrf_token %}
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" class="form-control" required><br>
         <label for="email">Email:</label>

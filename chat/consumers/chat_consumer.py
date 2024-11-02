@@ -4,6 +4,9 @@ import json
 from asgiref.sync import sync_to_async
 from ..models import PublicChatRoom, Message
 from django.contrib.auth.models import User
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
+import base64
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.room_slug = f"room_{self.scope['url_route']['kwargs']['room_slug']}"
@@ -36,9 +39,20 @@ class ChatConsumer(AsyncWebsocketConsumer):
         room_slug = data_json['room_slug']
         profile_pic = data_json['profile_pic']
         timestamp = data_json['timestamp']
-        #print(data_json)
+        file_name = data_json['file_name']
+        file_data = data_json['file_data']
         
-        await self.save_message(username, message, room_slug)
+        # decoded_data = base64.b64decode(file_data.split(',')[1])
+        # data = ("files/"+file_name, ContentFile(decoded_data))
+        data = None
+        if (file_data !=  None):
+            try:
+                format, imgstr = file_data.split(';base64,')
+                data = ContentFile(base64.b64decode(imgstr), name= file_name) # You can save this as file instance.
+            except:
+                pass
+        await self.save_message(username, message, room_slug,data)
+
         
         await self.channel_layer.group_send(
             self.room_group_name,
@@ -48,7 +62,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 'message':message,
                 'room_slug':room_slug,
                 'profile_pic':profile_pic,
-                'timestamp':timestamp
+                'timestamp':timestamp,
+                'file_data': file_data
             }
         )
 
@@ -59,15 +74,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
         room_slug = event['room_slug']
         profile_pic = event['profile_pic']
         timestamp = event['timestamp']
+        file_data = event['file_data']
         await self.send(text_data=json.dumps({
             'username':username,
             'message':message,
             'room_slug':room_slug,
             'profile_pic':profile_pic,
-            'timestamp':timestamp
+            'timestamp':timestamp,
+            'file_data': file_data
         }))
+    
     @sync_to_async
-    def save_message(self, username, message, room_slug):
+    def save_message(self, username, message, room_slug,file):
         room = PublicChatRoom.objects.get(slug=room_slug)
         sender = User.objects.get(username=username)
-        Message.objects.create(room=room, sender=sender, content=message)
+        Message.objects.create(room=room, sender=sender, content=message,file=file)

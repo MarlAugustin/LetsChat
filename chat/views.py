@@ -50,6 +50,7 @@ def room(request, slug):
     room = PublicChatRoom.objects.get(slug=slug)
     chat_messages = Message.objects.filter(room=room)
     auth_user = request.user
+
     return render(request, 'chat/public/room.html', { 'chat_messages' : chat_messages,'room':room, 'auth_user':auth_user})
 
 """
@@ -62,8 +63,7 @@ def create_room(request):
         slug = name.replace(' ', '_').lower()
         public = True
         username = request.user.username
-        print(slug,name,public)
-        #PublicChatRoom.objects.create(name=name,public=public,slug=slug)
+        #print(slug,name,public)
         try:
             PublicChatRoom.objects.create(name=name,public=public,slug=slug)
             messages.success(request, f'{username}, your have successfuly created a chat room')

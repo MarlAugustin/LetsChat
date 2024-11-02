@@ -20,7 +20,14 @@
                             </div>
                             <div class="msg">
                                 <div class="user-msg">
-                                    <p class="text-start">{{ message.content }}</p>
+                                    <p class="text-start">
+                                        {% if message.file%}
+                                            <img src="{{message.file.url}}"></img></br>
+                                        {% endif %}
+                                        {% if message.content %}
+                                            {{ message.content }}
+                                        {% endif %}
+                                    </p>
                                     <span>{{ message.sender }} | {{ message.timestamp }}</span>
                                 </div>
                             </div>
@@ -32,7 +39,14 @@
                         </div>
                         <div class="msgs">
                             <div class="other-msg">
-                                <p class="text-start">{{ message.content }}</p>
+                                        <p class="text-start">
+                                            {% if message.file%}
+                                                <img src="/media/{{message.file}}"></img></br>
+                                            {% endif %}
+                                            {% if message.content %}
+                                                {{ message.content }}
+                                            {% endif %}
+                                        </p>
                                 <span>{{ message.sender }} | {{ message.timestamp }}</span>
                             </div>
                         </div>
@@ -42,12 +56,21 @@
                 {% endfor %}
             </section>
         </div>
-        <form id="message-form" class="chat-bottom">
-            <div class="input-group mb-3">
-                <textarea class="form-control" id="message-input" rows="3" placeholder="Your message..." aria-describedby="btn-send"></textarea>
-                <button class="btn btn-outline-secondary" type="submit" id="btn-send">Send</button>
+        <div class="chat-bottom">
+            <form id="message-form" enctype="multipart/form-data">
+                <div class="input-group mb-3">
+                    <label for="formFile" id="file-label">
+                        <svg width="25px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M364.2 83.8c-24.4-24.4-64-24.4-88.4 0l-184 184c-42.1 42.1-42.1 110.3 0 152.4s110.3 42.1 152.4 0l152-152c10.9-10.9 28.7-10.9 39.6 0s10.9 28.7 0 39.6l-152 152c-64 64-167.6 64-231.6 0s-64-167.6 0-231.6l184-184c46.3-46.3 121.3-46.3 167.6 0s46.3 121.3 0 167.6l-176 176c-28.6 28.6-75 28.6-103.6 0s-28.6-75 0-103.6l144-144c10.9-10.9 28.7-10.9 39.6 0s10.9 28.7 0 39.6l-144 144c-6.7 6.7-6.7 17.7 0 24.4s17.7 6.7 24.4 0l176-176c24.4-24.4 24.4-64 0-88.4z"/></svg>
+                    </label>
+                    <input type="file" id="formFile" accept="image/*">
+                    <textarea class="form-control" id="message-input" rows="3" placeholder="Your message..." aria-describedby="btn-send file-label" name="message"></textarea>
+                    <button class="btn btn-outline-secondary" type="submit" id="btn-send">Send</button>
+                </div>
+            </form>
+            <div class="mb-3">
+                <p class="file-name"></p>
             </div>
-        </form>
+        </div>
     </div>
 {% endblock %}
 
@@ -61,32 +84,71 @@
     const userName = JSON.parse(document.getElementById('json-username').textContent);
     const profile_pic = JSON.parse(document.getElementById('json-profile-pic').textContent);
     timestamp = formatDate(new Date())
+    const file = document.querySelector('#formFile');
+    file_name = ""
+    file_data = ''
+    file.addEventListener('change', function(e){
+         // Get the selected file
+        const [file] = e.target.files;
+        // Get the file name and size
+        const { name: fileName, size } = file;
+        // Convert size in bytes to kilo bytes
+        const fileSize = (size / 1000).toFixed(2);
+        // Set the text content
+        file_name = fileName
+        const fileNameAndSize = `${fileName} - ${fileSize}KB`;
+        document.querySelector('.file-name').textContent = fileNameAndSize;
+        //transforming the file for updload 
+        const fr = new FileReader();
+
+        fr.readAsDataURL(file);
+        fr.addEventListener('load', ()=> {
+            file_data = fr.result;
+            //console.log(url);
+        })   
+    });
+
     const socketURL = `ws://${window.location.host}/ws/messages/${room_slug}/`;
     const chatSocket = new WebSocket(socketURL);
 
     chatSocket.onmessage = function(e) {
         let data = JSON.parse(e.data)
-        if(data.message) {
+        if(data.message || data.file_data) {
             html = ''
             if (data.username == userName) {
                 html += '<div class="user-chats">'
                 html += '<div class="user-img"><img height="50px" src="'+ data.profile_pic +'"></img></div>'
                 html += '<div class="msg"><div class="user-msg">'
-                html += '<p class="text-start">' + data.message +'</p>'
-                html += '<span>'+ data.username + '| '+ data.timestamp + '</span>'
+                html += '<p class="text-start">'
+                if (data.file_data)
+                {
+                        html += '<img height="300px" width="300px" src="'+ data.file_data +'"></img></br>'
+                }
+                 if (data.message)
+                {
+                    html +=  data.message 
+                }
+                html += '</p><span>'+ data.username + '| '+ data.timestamp + '</span>'
                 html += '</div></div></div>'
             } else {
                 html += '<div class="other-chats">'
                 html += '<div class="other-img"><img height="50px" src="'+ data.profile_pic +'"></img></div>'
-                html += '<div class="msgs"><div class="other-msg"><p class="text-start">' + data.message +'</p>'
-                html += '<span>'+ data.username + '| '+ data.timestamp +'</span></div></div></div>'
+                html += '<div class="msgs"><div class="other-msg"><p class="text-start">'
+                if (data.file_data)
+                {
+                    html += '<img height="300px" width="300px" src="'+ data.file_data +'"></img></br>'
+                }
+                else if (data.message)
+                {
+                    html += data.message
+                }
+                html += '</p><span>'+ data.username + '| '+ data.timestamp +'</span></div></div></div>'
             }
            
             document.querySelector('.chat').innerHTML += html
-        }else{
-            alert('No message was written')
+            scrollToBottom()
         }
-        console.log('Data:', data)
+        //console.log('Data:', data)
     }
     chatSocket.onclose = function(e) {
       console.log('onmessage')
@@ -95,14 +157,24 @@
     form.addEventListener('submit', function(e){
         e.preventDefault();
         let message_sent = document.getElementById('message-input').value;
-        chatSocket.send(JSON.stringify({
-            'message': message_sent,
-            'username': userName,
-            'profile_pic': profile_pic,
-            'timestamp': timestamp,
-            'room_slug': room_slug
-        }));
-        document.getElementById('message-input').value = '';
+        if (message_sent == "" && file_data =='' ) {
+            alert("You must write a message or choose an image")
+        } else {
+            chatSocket.send(JSON.stringify({
+                'message': message_sent,
+                'username': userName,
+                'profile_pic': profile_pic,
+                'timestamp': timestamp,
+                'room_slug': room_slug,
+                'file_data' : file_data,
+                'file_name' : file_name,
+            }));
+            document.querySelector('.file-name').textContent = "";
+            document.querySelector('#formFile').value = null;
+            file_data = ''
+            file_name = ''
+            form.reset();
+        }
     })
     function formatDate(date) {
         const options = { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true };
@@ -111,6 +183,15 @@
         // Replace AM/PM with lowercase
         return formattedDate.replace(/(AM|PM)/, (match) => match.toLowerCase());
     }
-    
-</script>
+    function scrollToBottom(){
+        // Function to scroll to the current latest message
+        const scroll_chat = document.querySelector('.chat');
+        setTimeout(() => {
+            scroll_chat.scrollTop = scroll_chat.scrollHeight - scroll_chat.clientHeight;
+          }, 0);
+    }
+    window.setTimeout( () => {
+        scrollToBottom();
+    }, 1000);
+    </script>
 {% endblock %}
