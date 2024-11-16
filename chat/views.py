@@ -1,8 +1,10 @@
 from django.shortcuts import render,redirect
-from .models import PublicChatRoom, Message
+from .models import PublicChatRoom, Message, PrivateChatRoom, PrivateMessage
+from friends.models import Friendlist
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-
+from django.http import HttpResponse
+from django.contrib.auth.models import User
 #import for paginations
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
@@ -47,11 +49,20 @@ This is the room view where the authenticated user can see all the messages in a
 """
 @login_required(login_url='/login/')
 def room(request, slug):
-    room = PublicChatRoom.objects.get(slug=slug)
-    chat_messages = Message.objects.filter(room=room)
-    auth_user = request.user
+    context = {}
+    username = request.user.username
+    try:
+        room = PublicChatRoom.objects.get(slug=slug)
+        chat_messages = Message.objects.filter(room=room)
+        context['chat_messages'] = chat_messages
+        context['room'] = room
+    except Exception as e:
+        # messages.warning(request, f'{username}, the public room that you tried to access did not exist.')
+        # return redirect('home')
+        return HttpResponse(f'{username}, the public room that you tried to access did not exist.')
 
-    return render(request, 'chat/public/room.html', { 'chat_messages' : chat_messages,'room':room, 'auth_user':auth_user})
+
+    return render(request, 'chat/public/room.html', context)
 
 """
 This is the create room view where the authenticated user can create a chat room
@@ -73,6 +84,55 @@ def create_room(request):
     return render(request, 'chat/public/create_room.html')
 
 @login_required(login_url='/login/')
-def private_rooms(request):
-    rooms = PublicChatRoom.objects.all().order_by('-slug')
-    return render(request, 'chat/private-groups/dms.html', {'rooms':rooms})
+def private_rooms(request, *args, **kwargs):
+    context = {}
+    user = request.user
+    rooms = PrivateChatRoom.objects.filter(members__id=user.id).order_by('-id')
+    if kwargs.get("id"):
+        room_id = kwargs.get("id")
+        try:
+            current_room = rooms.get(pk=room_id)
+            members = current_room.members.all()
+            chat_messages = PrivateMessage.objects.filter(room=current_room)
+            context['chat_messages'] = chat_messages
+            context['rooms'] = rooms
+            context['current_room'] = current_room
+            context['members'] = members
+        except Exception as e:
+            return HttpResponse("You cannot view, a private chat that you are not a member of.")
+    else:
+        if rooms.__len__() > 0:
+            current_room = rooms.first()
+            chat_messages = PrivateMessage.objects.filter(room=current_room)
+            members = current_room.members.all()
+            context['chat_messages'] = chat_messages
+            context['rooms'] = rooms
+            context['current_room'] = current_room
+            context['members'] = members
+        else:
+            context['chat_messages'] = None
+            context['rooms'] = None
+            context['current_room'] = None
+            context['members'] = None
+    friends =  Friendlist.objects.get(user=user).friends.all()
+    context['friends'] = friends
+
+    #Creation of a new private group chat or updating an existing group chat
+    if request.method == 'POST':
+        selected_friends_name = request.POST.getlist('selected-friends',None)
+        group_name =  request.POST.get('group-name')
+        creator = request.user
+        if len(selected_friends_name) != 0:
+            new_private_room = PrivateChatRoom(name=group_name,creator=creator)
+            new_private_room.save()
+            new_private_room.members.add(creator)
+            for name in selected_friends_name:
+                creator_friendlist = Friendlist.objects.get(user=creator).friends.all()
+                friend = creator_friendlist.get(username__contains=name)
+                # print(friend)
+                new_private_room.members.add(friend)
+            new_private_room.save()
+            return redirect('private_room')
+        else:
+            messages.warning(request, f'{creator.username}, you must select at least 1 friend to create a group')
+    return render(request, 'chat/private-groups/dms.html', context )

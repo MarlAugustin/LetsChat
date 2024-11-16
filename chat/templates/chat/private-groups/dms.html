@@ -6,72 +6,140 @@
 {% endblock %}
 {% block content %}
     <div class="main-container d-flex">
-        <div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-body-tertiary" style="width: 380px;">
-            <a href="/" class="d-flex align-items-center flex-shrink-0 p-3 link-body-emphasis text-decoration-none border-bottom">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" width="30" height="24"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M208 352c114.9 0 208-78.8 208-176S322.9 0 208 0S0 78.8 0 176c0 38.6 14.7 74.3 39.6 103.4c-3.5 9.4-8.7 17.7-14.2 24.7c-4.8 6.2-9.7 11-13.3 14.3c-1.8 1.6-3.3 2.9-4.3 3.7c-.5 .4-.9 .7-1.1 .8l-.2 .2s0 0 0 0s0 0 0 0C1 327.2-1.4 334.4 .8 340.9S9.1 352 16 352c21.8 0 43.8-5.6 62.1-12.5c9.2-3.5 17.8-7.4 25.2-11.4C134.1 343.3 169.8 352 208 352zM448 176c0 112.3-99.1 196.9-216.5 207C255.8 457.4 336.4 512 432 512c38.2 0 73.9-8.7 104.7-23.9c7.5 4 16 7.9 25.2 11.4c18.3 6.9 40.3 12.5 62.1 12.5c6.9 0 13.1-4.5 15.2-11.1c2.1-6.6-.2-13.8-5.8-17.9c0 0 0 0 0 0s0 0 0 0l-.2-.2c-.2-.2-.6-.4-1.1-.8c-1-.8-2.5-2-4.3-3.7c-3.6-3.3-8.5-8.1-13.3-14.3c-5.5-7-10.7-15.4-14.2-24.7c24.9-29 39.6-64.7 39.6-103.4c0-92.8-84.9-168.9-192.6-175.5c.4 5.1 .6 10.3 .6 15.5z"/></svg><use xlink:href="#bootstrap"></use></svg>
-                <span class="fs-5 fw-semibold">Private DMS</span>
-            </a>
-            <a href="" class="d-flex align-items-center flex-shrink-0 p-3 link-body-emphasis text-decoration-none border-bottom">
-                <svg class="btn btn-outline-secondary" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" width="60" height="48"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M96 128a128 128 0 1 1 256 0A128 128 0 1 1 96 128zM0 482.3C0 383.8 79.8 304 178.3 304l91.4 0C368.2 304 448 383.8 448 482.3c0 16.4-13.3 29.7-29.7 29.7L29.7 512C13.3 512 0 498.7 0 482.3zM609.3 512l-137.8 0c5.4-9.4 8.6-20.3 8.6-32l0-8c0-60.7-27.1-115.2-69.8-151.8c2.4-.1 4.7-.2 7.1-.2l61.4 0C567.8 320 640 392.2 640 481.3c0 17-13.8 30.7-30.7 30.7zM432 256c-31 0-59-12.6-79.3-32.9C372.4 196.5 384 163.6 384 128c0-26.8-6.6-52.1-18.3-74.3C384.3 40.1 407.2 32 432 32c61.9 0 112 50.1 112 112s-50.1 112-112 112z"/>
-                </svg>
-                New private message
-            </a>
-            <div class="list-group list-group-flush border-bottom" id="scrollarea">
-                <ol>
-                    {% for room in rooms %}
-                    <li class="chat list-group-item list-group-item-action py-3 lh-sm">
-                        <div class="d-flex w-100 align-items-center justify-content-between">
-                        <strong class="mb-1">{{room.name}}</strong>
-                        <!--<small class="text-body-secondary">Tues</small>-->
-                        </div>
-                        <div class="col-10 mb-1 small">Some placeholder content</div>
-                    </li>
-                    {% endfor %}
-                </ol>
-            </div>
-        </div>
-        <div class="message-wrapper">
-            <div class="chat-header d-flex flex-row mb-2">
-                <h1 class="p-2 w-100">Test</h1>
-                <a href="" class="d-flex p-2 flex-shrink-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="30">
-                        <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M495.9 166.6c3.2 8.7 .5 18.4-6.4 24.6l-43.3 39.4c1.1 8.3 1.7 16.8 1.7 25.4s-.6 17.1-1.7 25.4l43.3 39.4c6.9 6.2 9.6 15.9 6.4 24.6c-4.4 11.9-9.7 23.3-15.8 34.3l-4.7 8.1c-6.6 11-14 21.4-22.1 31.2c-5.9 7.2-15.7 9.6-24.5 6.8l-55.7-17.7c-13.4 10.3-28.2 18.9-44 25.4l-12.5 57.1c-2 9.1-9 16.3-18.2 17.8c-13.8 2.3-28 3.5-42.5 3.5s-28.7-1.2-42.5-3.5c-9.2-1.5-16.2-8.7-18.2-17.8l-12.5-57.1c-15.8-6.5-30.6-15.1-44-25.4L83.1 425.9c-8.8 2.8-18.6 .3-24.5-6.8c-8.1-9.8-15.5-20.2-22.1-31.2l-4.7-8.1c-6.1-11-11.4-22.4-15.8-34.3c-3.2-8.7-.5-18.4 6.4-24.6l43.3-39.4C64.6 273.1 64 264.6 64 256s.6-17.1 1.7-25.4L22.4 191.2c-6.9-6.2-9.6-15.9-6.4-24.6c4.4-11.9 9.7-23.3 15.8-34.3l4.7-8.1c6.6-11 14-21.4 22.1-31.2c5.9-7.2 15.7-9.6 24.5-6.8l55.7 17.7c13.4-10.3 28.2-18.9 44-25.4l12.5-57.1c2-9.1 9-16.3 18.2-17.8C227.3 1.2 241.5 0 256 0s28.7 1.2 42.5 3.5c9.2 1.5 16.2 8.7 18.2 17.8l12.5 57.1c15.8 6.5 30.6 15.1 44 25.4l55.7-17.7c8.8-2.8 18.6-.3 24.5 6.8c8.1 9.8 15.5 20.2 22.1 31.2l4.7 8.1c6.1 11 11.4 22.4 15.8 34.3zM256 336a80 80 0 1 0 0-160 80 80 0 1 0 0 160z"/>
-                    </svg>
-                </a>
-            </div>
-            <div class="chat-messages">
-                <section class="chat">
-                    
-                </section>
-            </div>
-            <form id="message-form" class="chat-bottom">
-                <div class="input-group mb-3">
-                    <textarea class="form-control" id="message-input" rows="3" placeholder="Your message..." aria-describedby="btn-send"></textarea>
-                    <button class="btn btn-outline-secondary" type="submit" id="btn-send">Send</button>
-                </div>
-            </form>
-        </div>
+        {% include "chat/private-groups/snippets/sidebar.html" %}
+        {% include "chat/private-groups/snippets/message.html" %}
     </div>
         
 {% endblock %}
 
 {% block scripts %}
-<script>
-    const chat_list = document.getElementById('scrollarea');
-    var chats = chat_list.getElementsByClassName("chat");
-    for (var i = 0; i < chats.length; i++) {
-        // This is used to activate the chat groups that is chosen by the user
-        chats[i].addEventListener("click", function() {
-          var current = document.getElementsByClassName("active");
-      
-          // If there's no active class
-          if (current.length > 0) {
-            current[0].className = current[0].className.replace(" active", "");
-          }
-      
-          // Add the active class to the current/clicked button
-          this.className += " active";
-        });
-      } 
+{{ current_room.id|json_script:"json-roomid" }}
+{{ request.user.username|json_script:"json-username" }}
+{{ request.user.profile.pic.url|json_script:"json-profile-pic" }}
+<script type="text/javascript">
+  const room_id= JSON.parse(document.getElementById('json-roomid').textContent);
+  const userName = JSON.parse(document.getElementById('json-username').textContent);
+  const profile_pic = JSON.parse(document.getElementById('json-profile-pic').textContent);
+  timestamp = formatDate(new Date())
+  const file = document.querySelector('#formFile');
+  file_name = ""
+  file_data = ''
+  file.addEventListener('change', function(e){
+    // Get the selected file
+   const [file] = e.target.files;
+   // Get the file name and size
+   const { name: fileName, size } = file;
+   // Convert size in bytes to kilo bytes
+   const fileSize = (size / 1000).toFixed(2);
+   // Set the text content
+   file_name = fileName
+   const fileNameAndSize = `${fileName} - ${fileSize}KB`;
+   document.querySelector('.file-name').textContent = fileNameAndSize;
+   //transforming the file for updload 
+   const fr = new FileReader();
+   fr.readAsDataURL(file);
+   fr.addEventListener('load', ()=> {
+       file_data = fr.result;
+    })   
+  });
+  const socketURL = `ws://${window.location.host}/ws/private-messages/${room_id}/`;
+  const chatSocket = new WebSocket(socketURL);
+  chatSocket.onmessage = function(e) {
+    let data = JSON.parse(e.data)
+    if(data.message || data.file_data) {
+        html = ''
+        if (data.username == userName) {
+            html += '<div class="user-chats">'
+            html += '<div class="user-img"><img height="50px" src="'+ data.profile_pic +'"></img></div>'
+            html += '<div class="msg"><div class="user-msg">'
+            html += '<p class="text-start">'
+            if (data.file_data)
+            {
+                    html += '<img height="300px" width="300px" src="'+ data.file_data +'"></img></br>'
+            }
+             if (data.message)
+            {
+                html +=  data.message 
+            }
+            html += '</p><span>'+ data.username + '| '+ data.timestamp + '</span>'
+            html += '</div></div></div>'
+        } else {
+            html += '<div class="other-chats">'
+            html += '<div class="other-img"><img height="50px" src="'+ data.profile_pic +'"></img></div>'
+            html += '<div class="msgs"><div class="other-msg"><p class="text-start">'
+            if (data.file_data)
+            {
+                html += '<img height="300px" width="300px" src="'+ data.file_data +'"></img></br>'
+            }
+            else if (data.message)
+            {
+                html += data.message
+            }
+            html += '</p><span>'+ data.username + '| '+ data.timestamp +'</span></div></div></div>'
+        }
+       
+        document.querySelector('.chat').innerHTML += html
+        scrollToBottom()
+    }
+    //console.log('Data:', data)
+  }
+  chatSocket.onclose = function(e) {
+    console.log('onmessage')
+  }
+  const form = document.getElementById('message-form');
+  form.addEventListener('submit', function(e){
+      e.preventDefault();
+      let message_sent = document.getElementById('message-input').value;
+      if (message_sent == "" && file_data =='' ) {
+          alert("You must write a message or choose an image")
+      } else {
+          chatSocket.send(JSON.stringify({
+              'message': message_sent,
+              'username': userName,
+              'profile_pic': profile_pic,
+              'timestamp': timestamp,
+              'room_id': room_id,
+              'file_data' : file_data,
+              'file_name' : file_name,
+          }));
+          document.querySelector('.file-name').textContent = "";
+          document.querySelector('#formFile').value = null;
+          file_data = ''
+          file_name = ''
+          form.reset();
+      }
+  })
+  function formatDate(date) {
+      const options = { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true };
+      const formattedDate = date.toLocaleString('en-US', options);
+      // Replace AM/PM with lowercase
+      return formattedDate.replace(/(AM|PM)/, (match) => match.toLowerCase());
+  }
+  function scrollToBottom(){
+      // Function to scroll to the current latest message
+      const scroll_chat = document.querySelector('.chat');
+      setTimeout(() => {
+          scroll_chat.scrollTop = scroll_chat.scrollHeight - scroll_chat.clientHeight;
+        }, 0);
+  }
+  window.setTimeout( () => {
+      scrollToBottom();
+  }, 1000);
+  const chat_list = document.getElementById('scrollarea');
+  var chats = chat_list.getElementsByClassName("chat");
+  for (var i = 0; i < chats.length; i++) {
+      // This is used to activate the chat groups that is chosen by the user
+      chats[i].addEventListener("click", function() {
+        var current = document.getElementsByClassName("active");
+    
+        // If there's no active class
+        if (current.length > 0) {
+          current[0].className = current[0].className.replace(" active", "");
+        }
+    
+        // Add the active class to the current/clicked button
+        this.className += " active";
+      });
+    } 
 </script>
 {% endblock %}

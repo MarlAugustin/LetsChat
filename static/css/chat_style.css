@@ -1,9 +1,7 @@
 main {
     min-height: 600px;
 }
-.alert {
-    margin-top: 3rem;
-}
+
 .wrapper {
     margin-top: 1rem;
 }
@@ -165,3 +163,11 @@ main {
     width: 100%;
     border-radius: 0;
 }
+/*friend request*/
+.text-center {
+    padding: 1rem;
+    background: #efefef;
+    border: 1px solid #ccc;
+        /* box-shadow: 0 4px 7px rgba(0, 0, 0, 0.4); */
+    border-radius: 10px;
+  }

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+{% extends 'layout.html' %}
+{% block title %}
+    Profile
+{% endblock %}
+
+{% block content %}
+<div class="profile">
+    <div class="container text-center">
+        <div class="row">
+          <div class="col">
+            <img src="{{account.profile.pic.url}}" alt="">
+          </div>
+          <div class="col align-self-center">
+            <h1>{{account.username}}'s Profile</h1>
+            {% if account.profile.email_hidden == False %}
+              {{account.email}}
+            {% else %}
+                ******************
+            {% endif %}
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <p>Friends ({{friends|length}})</button>
+        </div>
+        {% if is_friend == True %}
+          <!-- Button trigger modal -->
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+            Unfriend
+          </button>
+
+          <!-- Modal -->
+          <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="staticBackdropLabel">Remove friend</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  {{request.user.username}} do you want to remove {{account.username}} from your friend list?
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button id="remove_friend_btn" type="button" class="btn btn-primary">Understood</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {% comment %} <a href="" class="btn btn-success">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" height="40px">
+              <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M160 368c26.5 0 48 21.5 48 48l0 16 72.5-54.4c8.3-6.2 18.4-9.6 28.8-9.6L448 368c8.8 0 16-7.2 16-16l0-288c0-8.8-7.2-16-16-16L64 48c-8.8 0-16 7.2-16 16l0 288c0 8.8 7.2 16 16 16l96 0zm48 124l-.2 .2-5.1 3.8-17.1 12.8c-4.8 3.6-11.3 4.2-16.8 1.5s-8.8-8.2-8.8-14.3l0-21.3 0-6.4 0-.3 0-4 0-48-48 0-48 0c-35.3 0-64-28.7-64-64L0 64C0 28.7 28.7 0 64 0L448 0c35.3 0 64 28.7 64 64l0 288c0 35.3-28.7 64-64 64l-138.7 0L208 492z"/>
+            </svg>
+            Message
+          </a> {% endcomment %}
+        {% else %}
+          {% if request_sent == -1 %}
+            <button id="send_friend_request_btn" class="btn btn-success" >
+              Send Friend request
+            </button>
+          {% elif request_sent == 0 %}
+            Accept Friend Request
+            <button id="decline_friend_request_btn" class="btn btn-danger rounded-circle p-2 lh-1" >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" height="20px">
+                <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/>
+              </svg>
+            </button>
+            <button id="accept_friend_request_btn" class="btn btn-success rounded-circle p-2 lh-1" >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" height="20px">
+                <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/>
+              </svg>
+            </button>
+          {% elif request_sent == 1 %}
+            <button id="cancel_friend_request_btn" class="btn btn-danger" >Cancel Friend request</button>
+          {% endif %}
+        {% endif %}
+      </div>
+        
+</div>
+<script>
+  function onFriendRequestSent()
+  {
+    location.reload();
+  }
+  function onFriendRequestCancel()
+  {
+    location.reload();
+  }
+  function onFriendRequestAccept()
+  {
+    location.reload();
+  }
+  function onFriendRequestDecline()
+  {
+    location.reload();
+  }
+  function onRemoveFriend()
+  {
+    location.reload();
+  }
+  var sendFriendRequestBtn = document.getElementById("send_friend_request_btn")
+  if (sendFriendRequestBtn != null)
+  {
+    sendFriendRequestBtn.addEventListener("click", function(){
+      sendFriendRequest("{{account.id}}", onFriendRequestSent)
+    })
+  }
+  var cancelFriendRequestBtn = document.getElementById("cancel_friend_request_btn")
+  if (cancelFriendRequestBtn != null)
+  {
+    cancelFriendRequestBtn.addEventListener("click", function(){
+      cancelFriendRequest("{{account.id}}", onFriendRequestCancel)
+    })
+  }
+  
+  var acceptFriendRequestBtn = document.getElementById("accept_friend_request_btn")
+  if (acceptFriendRequestBtn != null)
+  {
+    acceptFriendRequestBtn.addEventListener("click", function(){
+      acceptFriendRequest("{{pending_friend_request_id}}", onFriendRequestDecline)
+    })
+  }
+  var declineFriendRequestBtn = document.getElementById("decline_friend_request_btn")
+  if (declineFriendRequestBtn != null)
+  {
+    declineFriendRequestBtn.addEventListener("click", function(){
+      declineFriendRequest("{{pending_friend_request_id}}", onFriendRequestAccept)
+    })
+  }
+  var removeFriendBtn = document.getElementById("remove_friend_btn")
+  if (removeFriendBtn != null)
+  {
+    removeFriendBtn.addEventListener("click", function(){
+      removeFriend("{{account.id}}", onRemoveFriend)
+    })
+  }
+</script>
+{% include "friends/snippets/send_friend_request.html" %}
+{% include "friends/snippets/cancel_friend_request.html" %}
+{% include "friends/snippets/accept_friend_request.html" %}
+{% include "friends/snippets/decline_friend_request.html" %}
+{% include "friends/snippets/remove_friend.html" %}
+
+{% endblock %}
+

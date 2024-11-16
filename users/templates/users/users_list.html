@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+{% extends 'layout.html' %}
+{% block title %}
+    Friend Requests
+{% endblock %}
+<style>
+    .row{
+        border-bottom: 1px grey;
+    }
+</style>
+{% block content %}
+<form method="get">
+    <div class="input-group mb-3" id="search">
+      <input type="search" class="form-control" name="username" placeholder="Search username..." aria-describedby="btn-send" value="{{username}}">
+      <button class="btn btn-outline-secondary" type="submit" id="btn-send">
+        <svg width="25px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+          <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/>
+        </svg>
+      </button>
+    </div>
+</form>
+<div class="container">
+        <caption class="lead">List of users</caption>
+        <div class="container text-center" id="scrollarea">
+            {% for user in users %}
+                {% if user != request.user %}
+                    <div class="row row-cols-5">
+                        <div class="col">
+                            <img height="50px" src="{{user.profile.pic.url}}"></img>
+                        </div>
+                        <div class="col">
+                            {{user.username}}
+                        </div>
+                        <div class="col">
+                            {% if user.profile.email_hidden == False %}
+                                {{user.email}}
+                            {% else %}
+                                ******************
+                            {% endif %}
+                        </div>
+                        <div class="col">
+                            {% if user in friends %}
+                                <span class="badge text-bg-light" style="min-width: 120px;">
+                                    <span class="fs-6">Friends</span>
+                                    <button class="btn btn-success rounded-circle p-2 lh-1" type="submit">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" height="20px">
+                                            <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/>
+                                        </svg>
+                                    </button>
+                                </span>
+                            {% else %}
+                                <span class="badge text-bg-light" style="min-width: 120px;">
+                                    <span class="fs-6">Not friends</span>
+                                    <button class="btn btn-danger rounded-circle p-2 lh-1" type="disabled">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" height="20px">
+                                            <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/>
+                                        </svg>
+                                   </button>
+                                </span>
+                            {% endif %}
+                        </div>
+                        <div class="col">
+                            <a href="{% url 'profile' user.username %}" class="btn btn-secondary">View profile</a>
+                        </div>
+                    </div>    
+                {% endif %}
+                <br>
+            {% endfor %}
+          </div>
+</div>
+{% endblock %}

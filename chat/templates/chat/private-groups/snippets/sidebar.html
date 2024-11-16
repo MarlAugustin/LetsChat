@@ -1,0 +1,84 @@
+<div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-body-tertiary" style="width: 380px;">
+    {% comment %} <a href="/" class="d-flex align-items-center flex-shrink-0 p-3 link-body-emphasis text-decoration-none border-bottom">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" width="30" height="24"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M208 352c114.9 0 208-78.8 208-176S322.9 0 208 0S0 78.8 0 176c0 38.6 14.7 74.3 39.6 103.4c-3.5 9.4-8.7 17.7-14.2 24.7c-4.8 6.2-9.7 11-13.3 14.3c-1.8 1.6-3.3 2.9-4.3 3.7c-.5 .4-.9 .7-1.1 .8l-.2 .2s0 0 0 0s0 0 0 0C1 327.2-1.4 334.4 .8 340.9S9.1 352 16 352c21.8 0 43.8-5.6 62.1-12.5c9.2-3.5 17.8-7.4 25.2-11.4C134.1 343.3 169.8 352 208 352zM448 176c0 112.3-99.1 196.9-216.5 207C255.8 457.4 336.4 512 432 512c38.2 0 73.9-8.7 104.7-23.9c7.5 4 16 7.9 25.2 11.4c18.3 6.9 40.3 12.5 62.1 12.5c6.9 0 13.1-4.5 15.2-11.1c2.1-6.6-.2-13.8-5.8-17.9c0 0 0 0 0 0s0 0 0 0l-.2-.2c-.2-.2-.6-.4-1.1-.8c-1-.8-2.5-2-4.3-3.7c-3.6-3.3-8.5-8.1-13.3-14.3c-5.5-7-10.7-15.4-14.2-24.7c24.9-29 39.6-64.7 39.6-103.4c0-92.8-84.9-168.9-192.6-175.5c.4 5.1 .6 10.3 .6 15.5z"/></svg><use xlink:href="#bootstrap"></use></svg>
+        <span class="fs-5 fw-semibold">Private DMS</span>
+    </a> {% endcomment %}
+    <!-- Button trigger modal -->
+    <button type="button" class="d-flex align-items-center flex-shrink-0 p-3 link-body-emphasis text-decoration-none border-bottom" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" width="60" height="48"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M96 128a128 128 0 1 1 256 0A128 128 0 1 1 96 128zM0 482.3C0 383.8 79.8 304 178.3 304l91.4 0C368.2 304 448 383.8 448 482.3c0 16.4-13.3 29.7-29.7 29.7L29.7 512C13.3 512 0 498.7 0 482.3zM609.3 512l-137.8 0c5.4-9.4 8.6-20.3 8.6-32l0-8c0-60.7-27.1-115.2-69.8-151.8c2.4-.1 4.7-.2 7.1-.2l61.4 0C567.8 320 640 392.2 640 481.3c0 17-13.8 30.7-30.7 30.7zM432 256c-31 0-59-12.6-79.3-32.9C372.4 196.5 384 163.6 384 128c0-26.8-6.6-52.1-18.3-74.3C384.3 40.1 407.2 32 432 32c61.9 0 112 50.1 112 112s-50.1 112-112 112z"/>
+        </svg>
+        New private message
+    </button>
+     <!-- Modal -->
+  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="staticBackdropLabel">Create group</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form method="post">
+            {% csrf_token %}
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="group-name" class="col-form-label">Group name: (optional)</label>
+                    <input type="text" class="form-control" id="group-name" name="group-name">
+                </div>
+                <div class="container text-center container-fluid" id="scrollarea">
+                    {% for friend in friends %}
+                        <div class="row row-cols-3">
+                            <div class="col">
+                                <img height="40px" src="{{friend.profile.pic.url}}"></img>
+                            </div>
+                            <div class="col">
+                                {{friend.username}}
+                            </div>
+                            <div class="col">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" name="selected-friends" type="checkbox" role="switch" id="flexSwitchCheckDefault" value="{{friend.username}}">
+                                </div>
+                            </div>
+                        </div>    
+                        <br>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">cancel</button>
+            <button id="create_group_btn" type="submit" class="btn btn-primary">Create</button>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% if rooms %}
+    <div class="list-group list-group-flush border-bottom scrollarea" id="scrollarea">
+    {% for room in rooms %}
+        {% if room.id == current_room.id %}
+        <a href="{% url 'private_room' room.id %}" class="list-group-item list-group-item-action active py-3 lh-sm" aria-current="true">
+        {% else %}
+        <a href="{% url 'private_room' room.id %}" class="list-group-item list-group-item-action py-3 lh-sm" aria-current="false">
+        {% endif %}
+            <div class="d-flex w-100 align-items-center justify-content-between">
+            {% if room.name %}
+                <strong class="mb-1">{{room.name}}</strong>
+            {% else %}
+                <strong class="mb-1">
+                    {% for member in room.members.all %}
+                        {% if member.username != request.user.username %}
+                            {% if member.username == members.last.username %}
+                            {{member.username}}
+                            {% else %}
+                            {{member.username}},
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </strong>
+            {% endif %}
+            </div>
+          </a>
+    {% endfor %}
+    </div>
+  {% endif %}
+    
+</div>
