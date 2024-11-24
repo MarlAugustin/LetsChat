@@ -23,7 +23,8 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'letschat.settings')
 http_response_app = get_asgi_application()
 application = ProtocolTypeRouter({
     "http": http_response_app,
-    "websocket": URLRouter(
+    "websocket": AuthMiddlewareStack( 
+        URLRouter(
             chat.routing.websocket_urlpatterns
-        )
+        ))
 })

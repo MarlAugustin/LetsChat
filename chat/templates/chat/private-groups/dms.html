@@ -2,7 +2,7 @@
 {% extends 'layout.html' %}
 
 {% block title %}
-    Private chats | LetsChat
+    Group chat | {{current_room.name}}
 {% endblock %}
 {% block content %}
     <div class="main-container d-flex">
@@ -46,12 +46,15 @@
   const chatSocket = new WebSocket(socketURL);
   chatSocket.onmessage = function(e) {
     let data = JSON.parse(e.data)
+    /* pattern is used to see if the user sends a link 
+       source: https://stackoverflow.com/questions/161738/what-is-the-best-regular-expression-to-check-if-a-string-is-a-valid-url
+    */
     if(data.message || data.file_data) {
         html = ''
         if (data.username == userName) {
             html += '<div class="user-chats">'
-            html += '<div class="user-img"><img height="50px" src="'+ data.profile_pic +'"></img></div>'
-            html += '<div class="msg"><div class="user-msg">'
+            html += '<div class="user-img"><img  src="'+ data.profile_pic +'"></img></div>'
+            html += '<div class="msg"><div class="user-msg" style="max-width: 45%;">'
             html += '<p class="text-start">'
             if (data.file_data)
             {
@@ -59,21 +62,55 @@
             }
              if (data.message)
             {
-                html +=  data.message 
+                urls = extractURLs(data.message)
+                let message = data.message
+                console.log(urls)
+                if (urls != [] )
+                {
+                    for (const match of urls) {
+                        link = '<a href="'  + match +'" target="_blank">' + match +'</a>'
+                        if (message.includes(link) == false){
+                            /* This "if" is used to see if the link wasn't already mentionned previously */
+                            message = message.replaceAll(match, link)
+                        }
+                    }
+                    html += message
+                }
+                    
+                else{
+                    html += data.message
+                }
             }
             html += '</p><span>'+ data.username + '| '+ data.timestamp + '</span>'
             html += '</div></div></div>'
         } else {
             html += '<div class="other-chats">'
-            html += '<div class="other-img"><img height="50px" src="'+ data.profile_pic +'"></img></div>'
-            html += '<div class="msgs"><div class="other-msg"><p class="text-start">'
+            html += '<div class="other-img"><img  src="'+ data.profile_pic +'"></img></div>'
+            html += '<div class="msgs"><div class="other-msg" style="max-width: 45%;"><p class="text-start">'
             if (data.file_data)
             {
                 html += '<img height="300px" width="300px" src="'+ data.file_data +'"></img></br>'
             }
             else if (data.message)
             {
-                html += data.message
+                urls = extractURLs(data.message)
+                let message = data.message
+                console.log(urls)
+                if (urls != [] )
+                {
+                    for (const match of urls) {
+                        link = '<a href="'  + match +'" target="_blank">' + match +'</a>'
+                        if (message.includes(link) == false){
+                            /* This "if" is used to see if the link wasn't already mentionned previously */
+                            message = message.replaceAll(match, link)
+                        }
+                    }
+                    html += message
+                }
+                    
+                else{
+                    html += data.message
+                }
             }
             html += '</p><span>'+ data.username + '| '+ data.timestamp +'</span></div></div></div>'
         }
@@ -82,7 +119,7 @@
         scrollToBottom()
     }
     //console.log('Data:', data)
-  }
+}
   chatSocket.onclose = function(e) {
     console.log('onmessage')
   }
@@ -117,7 +154,7 @@
   }
   function scrollToBottom(){
       // Function to scroll to the current latest message
-      const scroll_chat = document.querySelector('.chat');
+      const scroll_chat = document.querySelector('.chat-messages');
       setTimeout(() => {
           scroll_chat.scrollTop = scroll_chat.scrollHeight - scroll_chat.clientHeight;
         }, 0);
@@ -141,5 +178,10 @@
         this.className += " active";
       });
     } 
+    function extractURLs(str) {
+        const regex = /(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z0-9\u00a1-\uffff][a-z0-9\u00a1-\uffff_-]{0,62})?[a-z0-9\u00a1-\uffff]\.)+(?:[a-z\u00a1-\uffff]{2,}\.?))(?::\d{2,5})?(?:[/?#]\S*)?/g;
+        const matches = str.match(regex);
+        return matches || [];
+    }
 </script>
 {% endblock %}

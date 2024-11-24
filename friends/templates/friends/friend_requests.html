@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 {% extends 'layout.html' %}
 {% block title %}
-    Profile
+    Friend requests
 {% endblock %}
 
 {% block content %}
@@ -10,10 +10,10 @@
   <p>No results</p>
 {% else %}
 <div class="container text-center" id="scrollarea">
-  <div class="input-group mb-3">
+  <div class="row row-cols-1 row-cols-md-3 g-4">
     {% for request in friend_requests %}
-    <div class="col">
-      <div class="card" style="width: 18rem;">
+    <div class="col mb-3">
+      <div class="card border-dark mb-3">
         <img src="{{request.sender.profile.pic.url}}" height="200px" style="border-radius: 0%;" alt="{{request.sender.username}}_picture">
         <div class="card-body">
           <h5 class="card-title">{{request.sender.username}}</h5>

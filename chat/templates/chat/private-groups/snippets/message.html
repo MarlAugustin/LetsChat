@@ -1,28 +1,195 @@
+{% load users_filter %}
+{% load url_filter %}
 <div class="message-wrapper">
-    <div class="chat-header d-flex flex-row mb-2">
+    <div class="chat-header d-flex flex-row" style="padding-right: 5px;">
         <h1 class="p-2 w-100">
             {% if rooms %}
                 {% if current_room.name %}
                         {{current_room.name}}
                 {% else %}
-                    {% for member in current_room.members.all %}
-                        {% if member.username != request.user.username %}
-                            {% if member.username == members.last.username %}
-                                {{member.username}}
-                            {% else %}
-                                {{member.username}},
-                            {% endif %}
+                    {% define current_room.members.all|remove_user:request.user.username as current_room_members%}
+                    {% for member in current_room_members %}
+                        {% if member.username == current_room_members.last.username %}
+                        {{member.username}}
+                        {% else %}
+                        {{member.username}},
                         {% endif %}
                     {% endfor %}
                 {% endif %}
             {% endif %}
         </h1>
-        <a href="" class="d-flex p-2 flex-shrink-1">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="30">
+        <button type="button" class="btn d-flex p-3 flex-shrink-1" >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="30" data-bs-toggle="modal" data-bs-target="#propertyBackdrop">
                 <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M495.9 166.6c3.2 8.7 .5 18.4-6.4 24.6l-43.3 39.4c1.1 8.3 1.7 16.8 1.7 25.4s-.6 17.1-1.7 25.4l43.3 39.4c6.9 6.2 9.6 15.9 6.4 24.6c-4.4 11.9-9.7 23.3-15.8 34.3l-4.7 8.1c-6.6 11-14 21.4-22.1 31.2c-5.9 7.2-15.7 9.6-24.5 6.8l-55.7-17.7c-13.4 10.3-28.2 18.9-44 25.4l-12.5 57.1c-2 9.1-9 16.3-18.2 17.8c-13.8 2.3-28 3.5-42.5 3.5s-28.7-1.2-42.5-3.5c-9.2-1.5-16.2-8.7-18.2-17.8l-12.5-57.1c-15.8-6.5-30.6-15.1-44-25.4L83.1 425.9c-8.8 2.8-18.6 .3-24.5-6.8c-8.1-9.8-15.5-20.2-22.1-31.2l-4.7-8.1c-6.1-11-11.4-22.4-15.8-34.3c-3.2-8.7-.5-18.4 6.4-24.6l43.3-39.4C64.6 273.1 64 264.6 64 256s.6-17.1 1.7-25.4L22.4 191.2c-6.9-6.2-9.6-15.9-6.4-24.6c4.4-11.9 9.7-23.3 15.8-34.3l4.7-8.1c6.6-11 14-21.4 22.1-31.2c5.9-7.2 15.7-9.6 24.5-6.8l55.7 17.7c13.4-10.3 28.2-18.9 44-25.4l12.5-57.1c2-9.1 9-16.3 18.2-17.8C227.3 1.2 241.5 0 256 0s28.7 1.2 42.5 3.5c9.2 1.5 16.2 8.7 18.2 17.8l12.5 57.1c15.8 6.5 30.6 15.1 44 25.4l55.7-17.7c8.8-2.8 18.6-.3 24.5 6.8c8.1 9.8 15.5 20.2 22.1 31.2l4.7 8.1c6.1 11 11.4 22.4 15.8 34.3zM256 336a80 80 0 1 0 0-160 80 80 0 1 0 0 160z"/>
             </svg>
-        </a>
-    </div>
+        </button>
+        <!--Modal containing the properties of the current private group chat, we can see the name and the members-->
+        <div class="modal fade" id="propertyBackdrop" data-bs-backdrop="settings" data-bs-keyboard="false" tabindex="-1" aria-labelledby="propertyBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h1 class="modal-title fs-5" id="propertyBackdropLabel">Properties</h1>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            {% if current_room.name|length != 0 %}
+                                <input type="text" class="form-control" id="group-name" name="group-name" value="{{current_room.name}}" disabled>
+                            {% else %}
+                                <input type="text" class="form-control" id="group-name" name="group-name" disabled>
+                            {% endif %}
+                            <label class="col-form-label">Members</label>
+                        </div>
+                        <div class="container text-center container-fluid" id="scrollarea">
+                            {% for member in members %}
+                                <div class="row row-cols-2">
+                                    <div class="col">
+                                        <img height="40px" src="{{member.profile.pic.url}}"></img>
+                                    </div>
+                                    <div class="col">
+                                        {{member.username}}
+                                    </div>
+                                </div>
+                                <br>
+                            {% endfor %}
+                        </div>
+    
+                    </div>
+                    <div class="modal-footer ">
+                        <div class="container-fluid">
+                            <div class="d-flex d-flex justify-content-between">
+                                {% if request.user != current_room.creator  %}
+                                    <button type="button" class="btn btn-danger" data-bs-target="#leaveChatBackdrop" data-bs-toggle="modal">Quit group</button>
+                                {% else %}
+                                    <button type="button" class="btn btn-danger" data-bs-target="#deleteChatBackdrop" data-bs-toggle="modal">Delete group</button>
+                                {% endif %}
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">cancel</button>
+                                <button type="button" class="btn btn-primary" data-bs-target="#updateBackdrop" data-bs-toggle="modal">Update</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+              </div> 
+        
+        </div>
+        <!-- Secound Modal, for deleting a group chat, visible only to the creator of the current group chat-->
+        <div class="modal fade" id="deleteChatBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteChatBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="deleteChatBackdropLabel">Delete group chat</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  {{request.user.username}} do you want to delete this current group chat? 
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <form method="post">
+                    {% csrf_token %}
+                    <button name="delete_group" id="delete_group_btn" type="submit" class="btn btn-danger" value="{{current_room.id}}">Yes,Delete</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        <!-- Third modal,Modal for leaving a group chat-->
+        <div class="modal fade" id="leaveChatBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="leaveChatBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="leaveChatBackdropLabel">Leave group chat</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  {{request.user.username}} do you want to leave this current group chat? You won't be able to view the messages in this group anymore.
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <form method="post">
+                    {% csrf_token %}
+                    <button name="leave_group" id="leave_group_btn" type="submit" class="btn btn-danger" value="{{current_room.id}}">Yes, leave</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        <form action="" method="post">
+            {% csrf_token %}
+            <!--Fourth modal, this open after clicking on update, this shows the users friend list and gives the possibility to update the current group chat -->
+            <div class="modal fade" id="updateBackdrop" data-bs-backdrop="settings" data-bs-keyboard="false" tabindex="-1" aria-labelledby="updateBackdropLabelLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h1 class="modal-title fs-5" id="updateBackdropLabelLabel">Update </h1>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="group-name" class="col-form-label">Group name: (optional)</label>
+                            {% if current_room.name|length != 0 %}
+                                <input type="text" class="form-control" id="group-name" name="group-name" value="{{current_room.name}}">
+                            {% else %}
+                                <input type="text" class="form-control" id="group-name" name="group-name">
+                            {% endif %}
+                            {% if user == current_room.creator %}
+                            <label class="col-form-label">Select to remove members from the group</label>
+                            {% endif %}
+                        </div>
+                        {% if user == current_room.creator %}
+                        <div class="container text-center container-fluid" id="scrollarea">
+                            {% for member in members %}
+                                {% if member != request.user %}
+                                <div class="row row-cols-3">
+                                    <div class="col">
+                                        <img height="40px" src="{{member.profile.pic.url}}"></img>
+                                    </div>
+                                    <div class="col">
+                                        {{member.username}}
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" name="remove-members" type="checkbox" role="switch" id="flexSwitchCheckDefault" value="{{member.username}}">
+                                        </div>
+                                    </div>
+                                </div> 
+                                {% endif %}
+                                <br>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        <label class="col-form-label">Select to add your friends to the group</label>
+                        <div class="container text-center container-fluid" id="scrollarea">
+                            {% for friend in friends %}
+                                {% if friend not in members%}
+                                <div class="row row-cols-3">
+                                    <div class="col">
+                                        <img height="40px" src="{{friend.profile.pic.url}}"></img>
+                                    </div>
+                                    <div class="col">
+                                        {{friend.username}}
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" name="add-friends" type="checkbox" role="switch" id="flexSwitchCheckDefault" value="{{friend.username}}">
+                                        </div>
+                                    </div>
+                                </div> 
+                                {% endif %}
+                                <br>
+                            {% endfor %}
+                        </div>
+    
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-target="#propertyBackdrop" data-bs-toggle="modal">Go back</button>
+                    <button id="update_group_btn" type="submit" name="updateGroup" class="btn btn-primary">Update current group</button>
+                    </div>
+                </div>
+                </div>
+              </div> 
+        </form>
     <div class="chat-messages">
         <section class="chat">
             {% if rooms %}
@@ -30,7 +197,7 @@
             {% if user == message.sender %}
                 <div class="user-chats">
                     <div class="user-img">
-                        <img height="50px" src="{{message.sender.profile.pic.url}}"></img>
+                        <img  src="{{message.sender.profile.pic.url}}"></img>
                     </div>
                     <div class="msg">
                         <div class="user-msg">
@@ -39,7 +206,7 @@
                                     <img src="{{message.file.url}}"></img></br>
                                 {% endif %}
                                 {% if message.content %}
-                                    {{ message.content }}
+                                    {{ message.content|urlize|url_target_blank }}
                                 {% endif %}
                             </p>
                             <span>{{ message.sender }} | {{ message.timestamp }}</span>
@@ -49,7 +216,7 @@
             {% else %}
             <div class="other-chats">
                 <div class="other-img">
-                    <img height="50px" src="{{message.sender.profile.pic.url}}"></img>
+                    <img  src="{{message.sender.profile.pic.url}}"></img>
                 </div>
                 <div class="msgs">
                     <div class="other-msg">
@@ -58,7 +225,7 @@
                                         <img src="/media/{{message.file}}"></img></br>
                                     {% endif %}
                                     {% if message.content %}
-                                        {{ message.content }}
+                                        {{ message.content|urlize|url_target_blank }}
                                     {% endif %}
                                 </p>
                         <span>{{ message.sender }} | {{ message.timestamp }}</span>
@@ -70,6 +237,7 @@
             {% endfor %}
             {% endif %}
         </section>
+        
     </div>
     <div class="chat-bottom">
     <form id="message-form" enctype="multipart/form-data">

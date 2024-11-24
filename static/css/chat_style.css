@@ -38,13 +38,13 @@ main {
     border-left: 1px solid #ccc;
     border-right: 1px solid #ccc;
     overflow: hidden;
-    min-height: 500px;
+    height: 500px;
     padding: 30px 0 0 25px;
+    overflow-y: auto;
+    scroll-behavior: smooth;
 }
 .chat{
     max-height: 500px;
-    overflow-y: auto;
-    scroll-behavior: smooth;
 }
 /* This is the css for the form which contains the send button*/
 .chat-bottom{
@@ -97,7 +97,7 @@ main {
     overflow: hidden;
     margin: 26px 20px;
 }
-.user-img {
+.user-img img{
     display: inline-block;
     width: 75px;
     float: right;
@@ -105,7 +105,7 @@ main {
 }
 .user-msg{
     float: right;
-    width: 46%;
+    max-width: 45%;
 }
 .user-msg p {
     background-color: #12b4ff;
@@ -119,7 +119,7 @@ main {
 }
 
 /* This css is used to customize the message sent by the other users */
-.other-img {
+.other-img img{
     display: inline-block;
     width: 75px;
     float: left;
@@ -131,7 +131,7 @@ main {
     width: 92%;
 }
 .other-msg{
-    width: 57%;
+    max-width: 45%;
 }
 .other-msg p {
     background: #efefef none repeat scroll 0 0;

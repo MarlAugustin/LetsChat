@@ -7,6 +7,7 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User
 #import for paginations
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+import json
 
 
 # Create your views here.
@@ -77,7 +78,7 @@ def create_room(request):
         #print(slug,name,public)
         try:
             PublicChatRoom.objects.create(name=name,public=public,slug=slug)
-            messages.success(request, f'{username}, your have successfuly created a chat room')
+            messages.success(request, f'{username}, you have successfuly created a chat room')
         except:
             messages.warning(request, f'{username}, the name chosen for the group already exists')
             #print(messages.warning(request, f'{username}, the name chosen for the group already exists'))
@@ -117,22 +118,76 @@ def private_rooms(request, *args, **kwargs):
     friends =  Friendlist.objects.get(user=user).friends.all()
     context['friends'] = friends
 
-    #Creation of a new private group chat or updating an existing group chat
     if request.method == 'POST':
-        selected_friends_name = request.POST.getlist('selected-friends',None)
-        group_name =  request.POST.get('group-name')
-        creator = request.user
-        if len(selected_friends_name) != 0:
-            new_private_room = PrivateChatRoom(name=group_name,creator=creator)
-            new_private_room.save()
-            new_private_room.members.add(creator)
-            for name in selected_friends_name:
-                creator_friendlist = Friendlist.objects.get(user=creator).friends.all()
-                friend = creator_friendlist.get(username__contains=name)
-                # print(friend)
-                new_private_room.members.add(friend)
-            new_private_room.save()
+        #the private_room pages contains 3 different post methods
+        if 'createGroup' in request.POST:
+            #createGroup is the name given to the button that creates a new private chat group
+            selected_friends_name = request.POST.getlist('selected-friends',None)
+            group_name =  request.POST.get('group-name')
+            creator = request.user
+            if len(selected_friends_name) != 0:
+                new_private_room = PrivateChatRoom(name=group_name,creator=creator)
+                new_private_room.save()
+                new_private_room.members.add(creator)
+                for name in selected_friends_name:
+                    creator_friendlist = Friendlist.objects.get(user=creator).friends.all()
+                    friend = creator_friendlist.get(username__contains=name)
+                    # print(friend)
+                    new_private_room.members.add(friend)
+                new_private_room.save()
+                return redirect('private_room')
+            else:
+                messages.warning(request, f'{creator.username}, you must select at least 1 friend to create a group')
+        if 'updateGroup' in request.POST:
+            #updateGroup is the name given to the button that will update an existing chat group
+            friends_name = request.POST.getlist('add-friends',None)
+            members_name = request.POST.getlist('remove-members',None)
+            group_name =  request.POST.get('group-name')
+            previous_group_name = current_room.name
+            user = request.user
+            update = False
+            if group_name != previous_group_name:
+                    current_room.name = group_name
+                    current_room.save()
+                    update = True
+            if len(friends_name) != 0:
+                for name in friends_name:
+                    user_friendlist = Friendlist.objects.get(user=user).friends.all()
+                    friend = user_friendlist.get(username__contains=name)
+                    if friend not in current_room.members.all():
+                        current_room.members.add(friend)
+                messages.success(request, f'{user.username}, you have successfuly added new members to the group chat')
+            if len(members_name) != 0 :
+                for name in members_name:
+                    member = current_room.members.all().get(username=name)
+                    current_room.members.remove(member)
+                messages.success(request, f'{user.username}, you have successfuly remove {len(members_name)} member/s from the group chat')
             return redirect('private_room')
-        else:
-            messages.warning(request, f'{creator.username}, you must select at least 1 friend to create a group')
+        if 'leave_group' in request.POST:
+            #leave_group is the name given to the button that creates a new private chat group
+            room_id =  request.POST.get('leave_group')
+            user = request.user
+            if room_id:
+                try:
+                    group = PrivateChatRoom.objects.get(id=room_id)
+                    group.members.remove(user)
+                    messages.success(request, f"Succesfully left the group chat.")
+                    return redirect('private_room')
+                except Exception as e:
+                    messages.warning(request,f"Something went wrong: {str(e)}")
+        if 'delete_group' in request.POST:
+            room_id =  request.POST.get('delete_group')
+            user = request.user
+            if room_id:
+                try:
+                    group = PrivateChatRoom.objects.get(id=room_id)
+                    creator = group.creator
+                    if creator == user:
+                        group.delete()
+                        messages.success(request, f"Succesfully deleted the group chat.")
+                        return redirect('private_room')
+                    else:
+                        messages.warning(request,f"You cannot delete a group that you aren't  the creator.")
+                except Exception as e:
+                    messages.warning(request,f"Something went wrong: {str(e)}")
     return render(request, 'chat/private-groups/dms.html', context )

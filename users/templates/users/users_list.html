@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 {% extends 'layout.html' %}
 {% block title %}
-    Friend Requests
+    Users list
 {% endblock %}
 <style>
     .row{
@@ -20,10 +20,10 @@
     </div>
 </form>
 <div class="container">
+        {% if users|length != 0 %}
         <caption class="lead">List of users</caption>
         <div class="container text-center" id="scrollarea">
             {% for user in users %}
-                {% if user != request.user %}
                     <div class="row row-cols-5">
                         <div class="col">
                             <img height="50px" src="{{user.profile.pic.url}}"></img>
@@ -39,33 +39,38 @@
                             {% endif %}
                         </div>
                         <div class="col">
-                            {% if user in friends %}
-                                <span class="badge text-bg-light" style="min-width: 120px;">
-                                    <span class="fs-6">Friends</span>
-                                    <button class="btn btn-success rounded-circle p-2 lh-1" type="submit">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" height="20px">
-                                            <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/>
-                                        </svg>
-                                    </button>
-                                </span>
+                            {% if user == request.user %}
                             {% else %}
-                                <span class="badge text-bg-light" style="min-width: 120px;">
-                                    <span class="fs-6">Not friends</span>
-                                    <button class="btn btn-danger rounded-circle p-2 lh-1" type="disabled">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" height="20px">
-                                            <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/>
-                                        </svg>
-                                   </button>
-                                </span>
+                                {% if user in friends %}
+                                    <span class="badge text-bg-light" style="min-width: 120px;">
+                                        <span class="fs-6">Friends</span>
+                                        <button class="btn btn-success rounded-circle p-2 lh-1" type="submit">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" height="20px">
+                                                <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"/>
+                                            </svg>
+                                        </button>
+                                    </span>
+                                {% else %}
+                                    <span class="badge text-bg-light" style="min-width: 120px;">
+                                        <span class="fs-6">Not friends</span>
+                                        <button class="btn btn-danger rounded-circle p-2 lh-1" type="disabled">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" height="20px">
+                                                <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/>
+                                            </svg>
+                                    </button>
+                                    </span>
+                                {% endif %}
                             {% endif %}
                         </div>
                         <div class="col">
                             <a href="{% url 'profile' user.username %}" class="btn btn-secondary">View profile</a>
                         </div>
                     </div>    
-                {% endif %}
                 <br>
             {% endfor %}
           </div>
+        {% else %}
+        <p>No results</p>
+        {% endif %}
 </div>
 {% endblock %}

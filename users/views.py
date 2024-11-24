@@ -115,14 +115,14 @@ def register(request):
 def users(request):
     context = {}
     username = '' 
+    user = request.user
     if request.GET:
             username = request.GET.get('username','')
             context['username'] = username
     if username == '' :
         users = User.objects.all()
     else :
-        users =  User.objects.filter(username__contains=username)
-    user = request.user
+        users =  User.objects.filter(username__contains=username).exclude(username__contains=user.username)
     #This accesses the other user account friends list, if the user doesn't have a friend list, we create one.
     try:
         friend_list = Friendlist.objects.get(user=user)

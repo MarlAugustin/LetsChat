@@ -69,6 +69,10 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'libraries': {
+                'users_filter' : 'chat.templatetag.users_filter',
+                'url_filter' : 'chat.templatetag.url_filter'
+            }
         },
     },
 ]
