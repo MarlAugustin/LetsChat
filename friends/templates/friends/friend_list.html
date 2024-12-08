@@ -9,6 +9,7 @@
     }
 </style>
 {% block content %}
+<caption class="lead">List of friends</caption>
 <form method="get">
     <div class="input-group mb-3" id="search">
       <input type="search" class="form-control" name="username" placeholder="Search username..." aria-describedby="btn-send" value="{{username}}">
@@ -22,8 +23,7 @@
 {% if friends|length == 0 %}
   <p>No results</p>
 {% else %}
-<div class="container">
-        <caption class="lead">List of friends</caption>
+<div class="container-fluid">
         <div class="container text-center" id="scrollarea">
             {% for friend in friends %}
                     <div class="row row-cols-4">

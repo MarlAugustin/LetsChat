@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-    <h1 class="align-text-top">Public chat rooms</h1>
+    {% comment %} <h1 class="align-text-top">Public chat rooms</h1> {% endcomment %}
     <div class="create-room">
       <a href="{% url 'create_room' %}" class="btn btn-primary">Create a new  room</a>
     </div>
@@ -21,8 +21,9 @@
       </div>
     </form>  
     <div class="container">
-      <div class="row row-cols-1 row-cols-md-3 g-4">
-         {% for room in rooms%}
+      {% if rooms %}
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+          {% for room in rooms%}
               {% if room.public == True %}
               <div class="col">
                 <div class="card">
@@ -33,8 +34,11 @@
                 </div>
               </div>
               {% endif %}
-         {% endfor %}
-    </div>
+          {% endfor %}
+      </div>
+      {% else %}
+        <p>No results</p>
+      {% endif %}
   </div>
 </div>
 <br>

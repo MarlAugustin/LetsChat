@@ -9,6 +9,7 @@
 {% if friend_requests|length == 0 %}
   <p>No results</p>
 {% else %}
+<caption class="lead">Friend requests</caption>
 <div class="container text-center" id="scrollarea">
   <div class="row row-cols-1 row-cols-md-3 g-4">
     {% for request in friend_requests %}
