@@ -3,18 +3,6 @@
 <p>To access the features a user need to be authenticated. </p>
 <h2>Programming languages used</h2>
 <p>Django, HTML, CSS, Javascript, Python, Bootstrap</p>
-<h2>Virtual environment</h2>
-<p>To create a virtual environment you need to use this following command, .venv is the name that I gave to it you change it:</p>
-```python
-py -m venv .venv
-```
-<p>To activate the virtual environment use this command:</p>
-`source .venv/Scripts/activate`
-<p>To run the server you will need to go to the project:</p>
-```python
-cd letschat 
-py manage.py runserver 
-```
 <h2>Important libraries</h2> 
 <p><a href="https://channels.readthedocs.io/en/latest/installation.html">python -m pip install -U 'channels[daphne]'</a>; This installs Channels together with the Daphne ASGI application server, with this library we can create live chat applications. </p>
 <p><a href="https://pypi.org/project/crispy-bootstrap4/">pip install crispy-bootstrap4</a>; Bootstrap4 template pack for django-crispy-forms.</p>
