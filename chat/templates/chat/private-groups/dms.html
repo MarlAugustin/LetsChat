@@ -58,7 +58,7 @@
             html += '<p class="text-start">'
             if (data.file_data)
             {
-                    html += '<img height="300px" width="300px" src="'+ data.file_data +'"></img></br>'
+                    html += '<img width="300px" src="'+ data.file_data +'" onclick="onClick(this)"></img></br>'
             }
              if (data.message)
             {
@@ -89,7 +89,7 @@
             html += '<div class="msgs"><div class="other-msg" style="max-width: 45%;"><p class="text-start">'
             if (data.file_data)
             {
-                html += '<img height="300px" width="300px" src="'+ data.file_data +'"></img></br>'
+                html += '<img width="300px" src="'+ data.file_data +'" onclick="onClick(this)"></img></br>'
             }
             else if (data.message)
             {
@@ -179,9 +179,15 @@
       });
     } 
     function extractURLs(str) {
+        //This extracts the urls and verifies if they are valid. Returns an empty array or an array containing the links
         const regex = /(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z0-9\u00a1-\uffff][a-z0-9\u00a1-\uffff_-]{0,62})?[a-z0-9\u00a1-\uffff]\.)+(?:[a-z\u00a1-\uffff]{2,}\.?))(?::\d{2,5})?(?:[/?#]\S*)?/g;
         const matches = str.match(regex);
         return matches || [];
+    }
+    function onClick(element) {
+        /* This function is activated once a user clicks on an image and opens up a modal of the image*/
+        document.getElementById("img01").src = element.src;
+        $('#imageModal').modal('show');
     }
 </script>
 {% endblock %}

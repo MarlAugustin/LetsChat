@@ -92,6 +92,14 @@ class PublicChatConsumer(AsyncWebsocketConsumer):
         sender = User.objects.get(username=username)
         Message.objects.create(room=room, sender=sender, content=message,file=file)
 
+    # @database_sync_to_async
+    # def update_user_status(self, user, status):
+    #     """
+    #     Updates the user `status`.
+    #     `status` can be one of the following status: 'online', 'offline' or 'away'
+    #     """
+    #     return Profile.objects.filter(pk=user.pk).update(online_status=status)
+    
 class PrivateChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.room_id = f"{self.scope['url_route']['kwargs']['room_id']}"

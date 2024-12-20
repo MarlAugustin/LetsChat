@@ -145,11 +145,9 @@ def private_rooms(request, *args, **kwargs):
             group_name =  request.POST.get('group-name')
             previous_group_name = current_room.name
             user = request.user
-            update = False
             if group_name != previous_group_name:
                     current_room.name = group_name
                     current_room.save()
-                    update = True
             if len(friends_name) != 0:
                 for name in friends_name:
                     user_friendlist = Friendlist.objects.get(user=user).friends.all()

@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse
 from friends.utils import get_friend_request_or_false
 from friends.friend_request_status import FriendRequestStatus
+from django.contrib.auth import logout
 # Create your views here.
 """
 This is the profile view where the user can update their profile
@@ -16,16 +17,28 @@ Else the form errors are displayed
 """
 @login_required(login_url='/login/')
 def profile(request):
+    u_form = None
+    p_form = None
+    friends = None
     if request.method == 'POST':
-        u_form = UpdateUserForm(request.POST,instance=request.user)
-        p_form = ProfileUpdateForm(request.POST,
-                                   request.FILES,
-                                   instance=request.user.profile)
-        if u_form.is_valid() and p_form.is_valid():
-            u_form.save()
-            p_form.save()
-            messages.success(request, f'Your account has been successfuly updated!')
-            return redirect('profile')
+        if 'updateAccount' in request.POST:
+            u_form = UpdateUserForm(request.POST,instance=request.user)
+            p_form = ProfileUpdateForm(request.POST,
+                                       request.FILES,
+                                       instance=request.user.profile)
+            if u_form.is_valid() and p_form.is_valid():
+                u_form.save()
+                p_form.save()
+                messages.success(request, f'Your account has been successfuly updated!')
+                return redirect('profile')
+        elif 'deleteAccount' in request.POST:
+            user = request.user
+            logout(request)
+            # print(user.username)
+            user.delete()
+            messages.success(request, f'{user.username} your account has been successfuly deleted!')
+            return redirect('login')        
+    
     else:
         u_form = UpdateUserForm(instance=request.user)
         p_form = ProfileUpdateForm(instance=request.user.profile)

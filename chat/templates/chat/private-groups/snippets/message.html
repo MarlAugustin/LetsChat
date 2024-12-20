@@ -205,7 +205,8 @@
                         <div class="user-msg">
                             <p class="text-start">
                                 {% if message.file%}
-                                    <img src="{{message.file.url}}"></img></br>
+                                    <img src="{{message.file.url}}"  alt="" onclick="onClick(this)"></img>
+                                    </br>
                                 {% endif %}
                                 {% if message.content %}
                                     {{ message.content|urlize|url_target_blank }}
@@ -224,7 +225,8 @@
                     <div class="other-msg">
                                 <p class="text-start">
                                     {% if message.file%}
-                                        <img src="/media/{{message.file}}"></img></br>
+                                        <img src="{{message.file.url}}"  alt="" onclick="onClick(this)"></img>
+                                        </br>
                                     {% endif %}
                                     {% if message.content %}
                                         {{ message.content|urlize|url_target_blank }}
@@ -239,7 +241,19 @@
             {% endfor %}
             {% endif %}
         </section>
-        
+        <!-- Modal for showing images-->
+        <div class="modal modal-lg fade" id="imageModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img class="modal-content" id="img01">
+                </div>
+            </div>
+            </div>
+        </div>
     </div>
     <div class="chat-bottom">
     <form id="message-form" enctype="multipart/form-data">
